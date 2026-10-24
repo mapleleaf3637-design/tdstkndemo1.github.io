@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F3E9D2">
+  <meta name="description" content="Mật Mã Sắc Việt — trò chơi giám tuyển trẻ sau chuyến tham quan mỹ thuật dân gian Việt Nam.">
+  <title>Mật Mã Sắc Việt · The Curator's Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:#F3E9D2; --light:#FCF7EC; --ink:#23211F; --red:#B83A32;
+      --blue:#31546D; --gold:#D4A84F; --green:#647A4D; --dim:#706B63;
+      --line:rgba(35,33,31,.17); --shadow:0 14px 46px rgba(48,38,26,.09);
+      --serif:"Playfair Display",Georgia,serif;
+      --sans:"Be Vietnam Pro",Arial,sans-serif;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); font-family:var(--sans); min-height:100vh;
+      background:radial-gradient(circle at 5% 15%, rgba(184,58,50,.065),transparent 30%),
+      radial-gradient(circle at 90% 40%,rgba(49,84,109,.055),transparent 32%),var(--paper); }
+    body::before { content:"";pointer-events:none;position:fixed;inset:0;z-index:2;opacity:.036;
+      background-image:repeating-linear-gradient(0deg,#352e2a 0 1px,transparent 1px 5px),
+      repeating-linear-gradient(90deg,#352e2a 0 1px,transparent 1px 7px); }
+    button,input,textarea { font:inherit; }
+    button { cursor:pointer; }
+    button:focus-visible, input:focus-visible,textarea:focus-visible,a:focus-visible,[tabindex="0"]:focus-visible {
+      outline:3px solid var(--blue);outline-offset:3px; }
+    img { display:block;max-width:100%; }
+    a { color:var(--blue); }
+    .app { max-width:1100px;margin:auto;padding:14px 17px 52px;min-height:100vh;position:relative;z-index:1; }
+    .masthead { display:flex;align-items:center;gap:12px;min-height:44px;margin-bottom:15px; }
+    .brand {display:flex;align-items:center;gap:9px;font-family:var(--serif);font-weight:700;font-size:.91rem;line-height:1;white-space:nowrap;}
+    .brand-mark {width:29px;height:29px;border:2px solid var(--red);border-radius:50%;display:grid;place-items:center;color:var(--red);font-family:var(--serif);font-size:20px;}
+    .progress-rail { flex:1;height:6px;border-radius:99px;background:rgba(35,33,31,.11);overflow:hidden; }
+    .progress-fill {height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .5s ease;}
+    .score-pill {font-size:.79rem;white-space:nowrap;font-weight:800;border:1px solid var(--line);border-radius:99px;padding:7px 10px;background:rgba(255,255,255,.37)}
+    .screen {animation:brushIn .48s ease both;}
+    @keyframes brushIn {from{opacity:0;transform:translateY(12px);clip-path:inset(0 8% 0 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0)}}
+    .home-layout {min-height:calc(100vh - 130px);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:26px;}
+    .home-copy {padding:42px 0;}
+    .overline {color:var(--red);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800;margin:0 0 12px;}
+    .hero-title {font:700 clamp(3.8rem,8.5vw,7.7rem)/.98 var(--serif);letter-spacing:-.055em;margin:0;}
+    .hero-title span {display:block;}
+    .red-stroke {width:90px;height:5px;background:var(--red);border-radius:100% 15% 40% 60%;transform:rotate(-2deg);margin:24px 0 18px;}
+    .subtitle {color:var(--blue);font:italic 500 clamp(1.04rem,2vw,1.35rem) var(--serif);margin:0;}
+    .lede {color:var(--dim);line-height:1.8;margin:18px 0 23px;max-width:500px;font-size:.92rem;}
+    .mode-label {font-weight:800;font-size:.82rem;margin:0 0 10px;}
+    .mode-row {display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 18px;max-width:520px;}
+    .mode-choice {text-align:left;padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.33);color:var(--ink);transition:.22s ease;}
+    .mode-choice:hover,.mode-choice.selected {border-color:var(--red);background:rgba(184,58,50,.075);transform:translateY(-2px);}
+    .mode-choice strong {display:block;font-size:.84rem;}
+    .mode-choice small {display:block;color:var(--dim);font-size:.72rem;line-height:1.6;margin-top:5px;}
+    .primary,.secondary,.quiet {border:1px solid transparent;border-radius:100px;padding:13px 22px;font-size:.89rem;font-weight:800;transition:.2s ease;min-height:46px;}
+    .primary {background:var(--red);color:white;box-shadow:0 8px 22px rgba(184,58,50,.20);}
+    .primary:hover {transform:translateY(-2px);filter:brightness(.96);}
+    .primary:disabled {cursor:not-allowed;opacity:.43;box-shadow:none;transform:none;}
+    .secondary {background:var(--blue);color:white;}
+    .secondary:hover {filter:brightness(1.1);}
+    .quiet {border-color:var(--line);background:rgba(255,255,255,.30);color:var(--ink);}
+    .quiet:hover {background:rgba(255,255,255,.65);}
+    .tiny-info {color:var(--dim);font-size:.74rem;line-height:1.7;margin:13px 0 0;}
+    .cover-display {height:min(610px,67vh);min-height:420px;position:relative;display:grid;place-items:center;}
+    .cover-display::before {content:"";position:absolute;inset:8% 6%;border:1px solid rgba(35,33,31,.17);border-radius:46% 54% 52% 48%;transform:rotate(-10deg)}
+    .cover-circle {height:64%;aspect-ratio:1;border-radius:50%;background:rgba(184,58,50,.075);position:absolute;}
+    .cover-photo {position:absolute;width:48%;aspect-ratio:4/5;padding:8px 8px 28px;background:var(--light);box-shadow:0 20px 48px rgba(35,33,31,.18);border:1px solid rgba(40,35,30,.09);}
+    .cover-photo img {width:100%;height:100%;object-fit:contain;background:#eee3d0;}
+    .cover-photo:nth-of-type(2){transform:rotate(-13deg) translate(-39%,-2%);z-index:1;}
+    .cover-photo:nth-of-type(3){transform:rotate(10deg) translate(38%,-15%);z-index:2;}
+    .cover-photo:nth-of-type(4){transform:rotate(-2deg) translate(0,24%);z-index:3;}
+    .cover-caption {position:absolute;z-index:4;bottom:2%;right:1%;background:var(--blue);color:white;padding:12px 18px;transform:rotate(3deg);font-family:var(--serif);font-size:1.12rem;box-shadow:0 10px 20px rgba(0,0,0,.12);}
+    .stage {max-width:970px;margin:0 auto;}
+    .stage-header {display:grid;grid-template-columns:56px 1fr;gap:16px;margin:28px 0 24px;align-items:start;}
+    .stage-num {background:var(--ink);color:var(--paper);font-size:1rem;font-weight:800;display:grid;place-items:center;border-radius:17px;width:56px;height:56px;}
+    .stage-header h2 {font:700 clamp(1.9rem,5vw,3.2rem)/1.12 var(--serif);margin:0;letter-spacing:-.035em;}
+    .stage-header p {color:var(--dim);font-size:.85rem;line-height:1.75;margin:10px 0 0;max-width:690px;}
+    .stage-grid {display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px;align-items:start;}
+    .paper-card {background:rgba(252,247,236,.79);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow);}
+    .paper-card.compact {padding:16px;}
+    .card-kicker {font-weight:800;color:var(--blue);font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;margin:0 0 13px;}
+    .question {font:600 clamp(1.35rem,3.7vw,2rem)/1.3 var(--serif);margin:0 0 15px;}
+    .crop-frame {aspect-ratio:5/3;overflow:hidden;border-radius:16px;position:relative;background:#e3d7c2;border:1px solid var(--line);}
+    .crop-visual {position:absolute;inset:0;background-size:280% auto;background-repeat:no-repeat;filter:saturate(.97);transition:filter .3s ease;}
+    .crop-frame.uncertain {box-shadow:inset 0 0 0 4px rgba(184,58,50,.12);}
+    .crop-frame.uncertain .crop-visual {filter:brightness(1.07) saturate(1.05);}
+    .crop-marker {position:absolute;left:12px;top:12px;background:rgba(35,33,31,.75);color:white;border-radius:100px;padding:6px 10px;font-size:.7rem;font-weight:800;}
+    .small-note {font-size:.78rem;line-height:1.75;color:var(--dim);margin:12px 0 0;}
+    .answer-grid {display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .answer-card {display:block;background:#fbf5e9;border:1px solid var(--line);border-radius:15px;text-align:left;overflow:hidden;color:var(--ink);padding:0;transition:.2s ease;}
+    .answer-card:hover:not(:disabled) {transform:translateY(-2px);box-shadow:0 9px 22px rgba(35,33,31,.11);}
+    .answer-card:disabled {cursor:default;opacity:.75;}
+    .answer-card.correct {border:2px solid var(--green);}
+    .answer-thumb {width:100%;aspect-ratio:5/3;background:#efe4d1;object-fit:contain;}
+    .answer-card strong {font-size:.77rem;line-height:1.5;display:block;padding:9px 11px 11px;}
+    .answer-card small {font-size:.7rem;color:var(--dim);display:block;padding:0 11px 8px;}
+    .feedback {padding:11px 14px;border-radius:13px;margin:13px 0 0;background:rgba(49,84,109,.08);font-size:.81rem;line-height:1.75;color:var(--blue);}
+    .feedback.good {background:rgba(100,122,77,.11);color:#3e5038;}
+    .feedback.soft {background:rgba(184,58,50,.07);color:#8a443d;}
+    .stamp {display:inline-block;color:var(--red);font-size:.72rem;font-weight:800;letter-spacing:.11em;border:2px solid var(--red);border-radius:5px;padding:3px 6px;margin-right:9px;transform:rotate(-8deg);animation:stampPop .5s cubic-bezier(.22,1.5,.3,1.1) both;}
+    @keyframes stampPop {from{opacity:0;transform:rotate(-18deg) scale(1.7)}to{opacity:1;transform:rotate(-8deg) scale(1)}}
+    .reveal-box {margin-top:12px;display:grid;grid-template-columns:minmax(0,220px) 1fr;align-items:center;gap:12px;}
+    .reveal-image {position:relative;display:inline-block;width:100%;background:#e8ddca;border-radius:10px;overflow:hidden;}
+    .reveal-image img {width:100%;height:auto;}
+    .reveal-ring {position:absolute;left:var(--rx);top:var(--ry);width:var(--rw);height:var(--rh);border:3px solid var(--red);background:rgba(212,168,79,.14);border-radius:50%;box-shadow:0 0 0 4px rgba(255,255,255,.55);pointer-events:none;}
+    .reveal-box p {margin:0;font-size:.8rem;color:var(--dim);line-height:1.7;}
+    .actions {display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:19px;}
+    .text-action {border:0;background:transparent;color:var(--blue);padding:10px 0;text-decoration:underline;text-underline-offset:4px;font-size:.81rem;font-weight:700;}
+    .text-action:disabled {opacity:.43;cursor:not-allowed;}
+    .tip {border-left:3px solid var(--gold);padding:11px 12px;background:rgba(212,168,79,.11);border-radius:0 10px 10px 0;color:#61512d;line-height:1.65;font-size:.81rem;margin-top:10px;}
+    .long-card {max-width:970px;margin:0 auto;}
+    .source-list {display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+    .art-token {border:1px solid var(--line);background:var(--light);padding:8px;border-radius:15px;color:var(--ink);text-align:left;box-shadow:0 4px 9px rgba(35,33,31,.04);transition:.2s ease;user-select:none;touch-action:pan-y;min-width:0;}
+    .art-token:hover {transform:translateY(-3px) rotate(1deg);box-shadow:0 12px 22px rgba(35,33,31,.10);}
+    .art-token.selected {outline:3px solid var(--blue);outline-offset:1px;background:#e6edf0;}
+    .art-token.dragging {opacity:.65;transform:rotate(2deg) scale(.98);}
+    .art-token img {width:100%;aspect-ratio:5/4;object-fit:contain;border-radius:8px;background:#eee5d3;}
+    .art-token strong {display:block;font-size:.76rem;line-height:1.55;margin:8px 3px 3px;min-height:2.3em;}
+    .art-token small {display:block;font-size:.69rem;color:var(--dim);margin:0 3px 5px;}
+    .drop-areas {display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+    .dropzone {min-height:192px;border:2px dashed rgba(49,84,109,.34);border-radius:21px;background:rgba(255,255,255,.30);padding:15px;text-align:left;transition:.2s ease;}
+    .dropzone:hover,.dropzone.over {border-color:var(--red);background:rgba(184,58,50,.06);}
+    .dropzone h3 {font:700 1.35rem var(--serif);margin:0 0 5px;}
+    .dropzone .drop-hint {color:var(--dim);font-size:.73rem;margin:0 0 12px;line-height:1.5;}
+    .placed-items {display:flex;gap:7px;flex-wrap:wrap;}
+    .placed-item {display:flex;gap:7px;align-items:center;padding:6px 8px;background:rgba(100,122,77,.12);border:1px solid rgba(100,122,77,.2);border-radius:10px;font-weight:700;font-size:.73rem;animation:inkBloom .5s ease both;}
+    .placed-item img {width:30px;height:34px;object-fit:cover;border-radius:4px;}
+    @keyframes inkBloom {from{opacity:0;filter:blur(7px);transform:scale(.92)}to{opacity:1;filter:blur(0);transform:scale(1)}}
+    .status-line {font-size:.82rem;color:var(--dim);margin:10px 0 0;line-height:1.65;}
+    .badge {display:inline-flex;align-items:center;gap:7px;font-size:.73rem;font-weight:700;color:var(--blue);border:1px solid rgba(49,84,109,.25);background:rgba(49,84,109,.055);border-radius:100px;padding:6px 10px;}
+    .choice-list {display:grid;gap:10px;}
+    .choice {width:100%;text-align:left;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.38);padding:13px 15px;color:var(--ink);font-size:.84rem;line-height:1.65;transition:.2s ease;}
+    .choice:hover:not(:disabled) {border-color:var(--blue);transform:translateX(2px);}
+    .choice:disabled {opacity:.7;cursor:default;}
+    .choice.good {border-color:var(--green);background:rgba(100,122,77,.12);}
+    .artwork-large {background:#e9ddc9;border-radius:14px;padding:13px;display:grid;place-items:center;min-height:280px;}
+    .artwork-large img {max-height:425px;width:100%;object-fit:contain;}
+    .artwork-large.tall img {max-height:545px;}
+    .hotspot-figure {position:relative;max-width:390px;margin:auto;}
+    .hotspot-figure img {width:100%;height:auto;border-radius:6px;box-shadow:0 8px 20px rgba(35,33,31,.12);}
+    .hotspot {position:absolute;left:var(--left);top:var(--top);transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;border:2px solid white;background:rgba(184,58,50,.92);color:white;font-weight:800;box-shadow:0 0 0 6px rgba(184,58,50,.23);transition:.2s ease;}
+    .hotspot:hover {transform:translate(-50%,-50%) scale(1.12);}
+    .hotspot.is-solved {background:var(--green);box-shadow:0 0 0 8px rgba(100,122,77,.25);}
+    .ink-note {animation:inkBloom 1s ease both;border-left:3px solid var(--blue);padding:13px 14px;background:rgba(49,84,109,.075);font-size:.81rem;line-height:1.8;border-radius:0 12px 12px 0;margin-top:12px;}
+    .theme-ticket {display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px;background:var(--blue);color:#fff;border-radius:16px;margin:0 0 17px;}
+    .theme-ticket small {font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.72;}
+    .theme-ticket strong {display:block;font:600 clamp(1.1rem,3vw,1.8rem)/1.4 var(--serif);margin-top:4px;}
+    .gallery-slots {display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .gallery-slot {position:relative;min-height:198px;border:2px dashed rgba(49,84,109,.35);border-radius:13px;background:rgba(255,255,255,.35);padding:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:.2s ease;}
+    .gallery-slot.over,.gallery-slot:hover {border-color:var(--red);background:rgba(184,58,50,.045);}
+    .gallery-slot .slot-number {font-family:var(--serif);font-size:2rem;color:rgba(49,84,109,.32);}
+    .gallery-slot .slot-hint {font-size:.73rem;color:var(--dim);margin-top:4px;line-height:1.5;}
+    .gallery-slot.filled {border:1px solid rgba(35,33,31,.15);background:var(--light);justify-content:flex-start;}
+    .gallery-slot.filled img {width:100%;height:145px;object-fit:contain;background:#efe5d3;border-radius:7px;}
+    .gallery-slot.filled strong {font-size:.72rem;line-height:1.45;margin-top:8px;}
+    .remove-slot {position:absolute;right:3px;top:3px;background:var(--red);color:#fff;border:none;border-radius:50%;width:27px;height:27px;font-size:1rem;font-weight:700;line-height:1;}
+    .form-area {margin-top:17px;display:grid;gap:12px;}
+    .field-label {font-size:.84rem;font-weight:800;display:block;margin:0 0 7px;}
+    .text-field {display:block;width:100%;border:1px solid rgba(35,33,31,.23);border-radius:11px;background:#fffaf0;color:var(--ink);padding:12px 14px;font-size:.86rem;}
+    .text-field:focus {border-color:var(--blue);}
+    .reason-list {display:grid;gap:8px;}
+    .reason-option {display:flex;gap:10px;align-items:center;border:1px solid var(--line);padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.30);font-size:.79rem;line-height:1.5;cursor:pointer;}
+    .reason-option.is-selected {border-color:var(--blue);background:rgba(49,84,109,.09);}
+    .reason-option input {accent-color:var(--blue);}
+    .result-intro {text-align:center;padding:24px 0 20px;}
+    .result-intro h1 {font:700 clamp(2.45rem,7vw,4.5rem)/1.05 var(--serif);letter-spacing:-.045em;margin:0 0 8px;}
+    .result-intro .name {color:var(--red);font-weight:800;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;}
+    .result-intro p {color:var(--dim);font-size:.91rem;line-height:1.75;margin:13px auto;max-width:600px;}
+    .result-columns {display:grid;grid-template-columns:1fr 1fr;gap:17px;}
+    .score-big {font:700 4rem var(--serif);color:var(--red);line-height:1;}
+    .score-big small {font:600 1rem var(--sans);color:var(--dim);}
+    .skill {display:grid;grid-template-columns:105px 1fr 43px;align-items:center;gap:9px;margin-top:16px;font-size:.78rem;}
+    .skill-name {font-weight:700;}
+    .meter {height:10px;background:rgba(35,33,31,.10);border-radius:50px;overflow:hidden;}
+    .meter > span {height:100%;display:block;border-radius:50px;background:var(--blue);animation:barIn .85s ease both;transform-origin:left;}
+    .meter.green > span {background:var(--green);}
+    .meter.gold > span {background:var(--gold);}
+    @keyframes barIn {from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    .virtual-gallery {background:linear-gradient(110deg,#e7dcc9,#f4ead9 55%,#e9dfcb);border-radius:21px;padding:22px 15px 28px;border:1px solid var(--line);box-shadow:var(--shadow);margin-top:18px;}
+    .gallery-sign {text-align:center;margin:0 auto 20px;max-width:550px;}
+    .gallery-sign small {color:var(--red);font-size:.75rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;}
+    .gallery-sign h2 {font:700 clamp(1.6rem,5vw,2.45rem)/1.15 var(--serif);margin:6px 0;}
+    .gallery-sign p {font-size:.79rem;color:var(--dim);line-height:1.7;margin:10px auto;}
+    .wall-artworks {display:grid;grid-template-columns:repeat(3,1fr);gap:13px;align-items:center;}
+    .wall-piece {text-align:center;align-self:stretch;}
+    .frame {background:#fdfaf4;border:7px solid #705642;outline:2px solid #aa8a66;box-shadow:0 8px 14px rgba(35,33,31,.20);padding:9px;height:245px;display:grid;place-items:center;}
+    .frame img {max-height:100%;width:100%;object-fit:contain;}
+    .wall-piece h3 {font:600 .92rem/1.5 var(--serif);margin:15px 0 3px;}
+    .wall-piece p {color:var(--dim);font-size:.69rem;margin:0;}
+    .gallery-footer {margin-top:19px;text-align:center;font-size:.74rem;color:var(--dim);font-style:italic;}
+    .source-foot {border-top:1px solid var(--line);margin:34px auto 0;padding-top:15px;max-width:970px;font-size:.68rem;color:var(--dim);line-height:1.7;}
+    .source-foot a {color:var(--blue);}
+    .source-foot p {margin:3px 0;}
+    .demo-chip {background:rgba(184,58,50,.07);color:#873c35;border:1px solid rgba(184,58,50,.16);border-radius:99px;padding:5px 9px;display:inline-flex;font-weight:800;font-size:.67rem;letter-spacing:.04em;}
+    .image-library {display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    .library-item {background:var(--light);padding:10px;border-radius:13px;border:1px solid var(--line);}
+    .library-item img {width:100%;height:190px;object-fit:contain;background:#ede2d0;border-radius:8px;}
+    .library-item strong {display:block;font-size:.8rem;margin:10px 0 2px;}
+    .library-item p {font-size:.7rem;color:var(--dim);margin:4px 0;}
+    .library-item a {font-size:.71rem;}
+    dialog {width:min(760px,calc(100% - 22px));max-height:88vh;overflow:auto;border:none;border-radius:22px;background:var(--paper);color:var(--ink);padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.35);}
+    dialog::backdrop {background:rgba(24,29,35,.73);backdrop-filter:blur(3px);}
+    .dialog-header {display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;}
+    .dialog-header h2 {font:600 1.65rem var(--serif);margin:0;}
+    .icon-button {font-size:1.3rem;border:1px solid var(--line);background:var(--light);width:36px;height:36px;border-radius:50%;}
+    .notice {position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:20;max-width:calc(100% - 28px);background:var(--ink);color:var(--light);border-radius:13px;padding:12px 17px;font-size:.79rem;box-shadow:0 14px 35px rgba(0,0,0,.19);transition:opacity .2s,transform .2s;}
+    .notice.visible {opacity:1;transform:translate(-50%,0);}
+    .visually-hidden {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+    @media(max-width:800px) {
+      .home-layout {grid-template-columns:1fr;min-height:unset;gap:6px;}
+      .home-copy {padding:30px 0 8px;}
+      .cover-display {height:350px;min-height:350px;max-width:450px;width:100%;margin:auto;}
+      .cover-photo {width:40%;}
+      .cover-caption {bottom:0;font-size:.95rem;}
+      .stage-grid {grid-template-columns:1fr;}
+      .result-columns {grid-template-columns:1fr;}
+      .stage-header {margin:17px 0 18px;}
+      .source-list {grid-template-columns:repeat(2,1fr);}
+      .art-token img {aspect-ratio:5/3;}
+    }
+    @media(max-width:470px) {
+      .app {padding:11px 12px 35px;}
+      .masthead {gap:9px;}
+      .brand {font-size:.79rem;}
+      .brand-mark {width:25px;height:25px;font-size:16px;}
+      .hero-title {font-size:3.9rem;}
+      .mode-row {gap:7px;}
+      .mode-choice {padding:11px 10px;}
+      .mode-choice small {font-size:.69rem;}
+      .stage-header {grid-template-columns:43px 1fr;gap:10px;}
+      .stage-num {width:43px;height:43px;font-size:.78rem;border-radius:13px;}
+      .stage-header h2 {font-size:1.72rem;}
+      .paper-card {padding:14px;border-radius:16px;}
+      .answer-card strong {padding:7px 8px;font-size:.71rem;}
+      .answer-card small {padding:0 8px 7px;font-size:.64rem;}
+      .drop-areas {gap:9px;}
+      .dropzone {padding:10px;min-height:194px;}
+      .dropzone h3 {font-size:1.1rem;}
+      .gallery-slots {gap:7px;}
+      .gallery-slot {padding:5px;min-height:166px;}
+      .gallery-slot.filled img {height:105px;}
+      .gallery-slot.filled strong {font-size:.61rem;}
+      .reveal-box {grid-template-columns:1fr;}
+      .reveal-image {max-width:260px;}
+      .theme-ticket {padding:13px 14px;}
+      .frame {height:145px;border-width:4px;outline-width:1px;padding:4px;}
+      .wall-artworks {gap:8px;}
+      .wall-piece h3 {font-size:.75rem;}
+      .wall-piece p {font-size:.62rem;}
+      .skill {grid-template-columns:95px 1fr 37px;gap:6px;}
+      .library-item img {height:140px;}
+    }
+    @media(prefers-reduced-motion:reduce) {*{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}}
+    @media print {
+      body {background:#fff!important;}
+      body::before,.masthead,.actions,.source-foot,.notice {display:none!important;}
+      .app {max-width:none;padding:0;}
+      .screen {animation:none;}
+      .paper-card,.virtual-gallery {box-shadow:none;break-inside:avoid;}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="masthead" aria-label="Trạng thái trò chơi">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">S</div><span>SẮC VIỆT</span></div>
+    <div class="progress-rail" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Tiến độ trò chơi"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="score-pill" id="scorePill">0 / 100</div>
+  </header>
+  <main id="game" class="screen" aria-live="polite"></main>
+  <footer class="source-foot">
+    <p><span class="demo-chip">BẢN DEMO ĐỂ KIỂM THỬ Ý TƯỞNG</span> Nội dung câu hỏi và cách diễn giải cần đối chiếu với nhãn hiện vật khi nhóm đi khảo sát. Danh sách này không khẳng định tất cả tác phẩm đang cùng trưng bày trên một tuyến tham quan.</p>
+    <p>Hình ảnh minh họa: Wikimedia Commons. Nguồn gốc và điều kiện sử dụng ảnh có trong <a href="README.md" target="_blank" rel="noopener">README</a> và phần thư viện hình trong game.</p>
+  </footer>
+</div>
+<dialog id="libraryDialog" aria-labelledby="libraryTitle">
+  <div class="dialog-header"><h2 id="libraryTitle">Thư viện tác phẩm</h2><button class="icon-button" id="closeLibrary" type="button" aria-label="Đóng thư viện">×</button></div>
+  <p class="small-note">Chế độ Demo: mở tranh để quan sát và đối chiếu. Trong phiên bản hoàn thiện, nhóm có thể thay bằng tác phẩm thuộc tuyến tham quan thực tế.</p>
+  <div class="image-library" id="libraryGrid"></div>
+</dialog>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+
+/* ============================================================
+ * DATA: Sửa các nội dung ở vùng này sau khi khảo sát bảo tàng.
+ * Đường dẫn ảnh dùng Wikimedia Commons khi có kết nối mạng.
+ * Có thể thay image bằng "assets/artworks/ten-anh.jpg".
+ * ============================================================ */
+const ARTWORKS = [
+  {
+    id:'mice', title:'Đám cưới chuột', tradition:'Đông Hồ',
+    image:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Mice%27s_wedding%2C_Dong_Ho_picture%2C_paper_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi%2C_Vietnam_-_DSC05290.JPG/960px-Mice%27s_wedding%2C_Dong_Ho_picture%2C_paper_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi%2C_Vietnam_-_DSC05290.JPG",
+    source:"https://commons.wikimedia.org/wiki/File:Mice%27s_wedding,_Dong_Ho_picture,_paper_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi,_Vietnam_-_DSC05290.JPG",
+    credit:'Ảnh: Daderot · CC0 1.0 · hiện vật chụp tại Bảo tàng Mỹ thuật Việt Nam',
+    tags:['động vật','đoàn rước','đời sống']
+  },
+  {
+    id:'rooster', title:'Gà trống và gà mái', tradition:'Đông Hồ',
+    image:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Rooster_and_hen%2C_Dong_Ho_picture%2C_paper_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi%2C_Vietnam_-_DSC05287.JPG/960px-Rooster_and_hen%2C_Dong_Ho_picture%2C_paper_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi%2C_Vietnam_-_DSC05287.JPG",
+    source:"https://commons.wikimedia.org/wiki/File:Rooster_and_hen,_Dong_Ho_picture,_paper_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi,_Vietnam_-_DSC05287.JPG",
+    credit:'Ảnh: Daderot · CC0 1.0 · hiện vật chụp tại Bảo tàng Mỹ thuật Việt Nam',
+    tags:['động vật','gia đình','đời sống']
+  },
+  {
+    id:'tigers', title:'Ngũ hổ', tradition:'Hàng Trống',
+    image:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Five_tigers%2C_Hang_Trong_painting%2C_Hanoi%2C_paper%2C_view_1_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi%2C_Vietnam_-_DSC05281.JPG/800px-Five_tigers%2C_Hang_Trong_painting%2C_Hanoi%2C_paper%2C_view_1_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi%2C_Vietnam_-_DSC05281.JPG",
+    source:"https://commons.wikimedia.org/wiki/File:Five_tigers,_Hang_Trong_painting,_Hanoi,_paper,_view_1_-_Vietnam_National_Museum_of_Fine_Arts_-_Hanoi,_Vietnam_-_DSC05281.JPG",
+    credit:'Ảnh: Daderot · CC0 1.0 · hiện vật chụp tại Bảo tàng Mỹ thuật Việt Nam',
+    tags:['động vật','bố cục','màu sắc']
+  },
+  {
+    id:'musicians', title:'Tứ bình – Tố nữ', tradition:'Hàng Trống',
+    image:'https://upload.wikimedia.org/wikipedia/commons/9/90/Tu_binh.JPG',
+    source:'https://commons.wikimedia.org/wiki/File:Tu_binh.JPG',
+    credit:'Ảnh tư liệu minh họa dòng tranh Hàng Trống · public domain; không xác nhận là đúng bộ tranh đang trưng bày tại bảo tàng',
+    tags:['nhân vật','âm nhạc','bố cục']
+  },
+  {
+    id:'jealousy', title:'Đánh ghen', tradition:'Đông Hồ',
+    image:'https://upload.wikimedia.org/wikipedia/commons/f/fc/%C4%90%C3%A1nh_ghen.JPG',
+    source:'https://commons.wikimedia.org/wiki/File:%C4%90%C3%A1nh_ghen.JPG',
+    credit:'Hình ảnh tranh dân gian Đông Hồ · public domain · tác phẩm bổ sung cho bản demo',
+    tags:['nhân vật','câu chuyện','đời sống']
+  }
+];
+
+const LOOK_QUESTIONS = [
+  { artwork:'mice', detail:'Một chú chuột đang mang vật phẩm trong đoàn rước',
+    focusX:69,focusY:27,scale:300, ringX:60,ringY:12,ringW:19,ringH:27,
+    hint:'Trong tranh có một đoàn động vật với nhiều món đồ mang theo.',
+    reveal:'Chi tiết nằm gần phía trên bên phải của bố cục. Hãy nhìn lại cách các nhân vật nối nhau thành đoàn.' },
+  { artwork:'tigers', detail:'Đôi mắt và những đường nét trên gương mặt hổ',
+    focusX:51,focusY:36,scale:310,ringX:39,ringY:24,ringW:25,ringH:24,
+    hint:'Quan sát tác phẩm có bố cục nhiều con vật xoay quanh một nhân vật chính.',
+    reveal:'Chi tiết thuộc gương mặt con hổ ở gần giữa tranh. Vị trí và tương phản giúp mắt người xem tập trung vào đây.' }
+];
+
+const DECODE_QUESTIONS = [
+  { artwork:'mice',kind:'options', prompt:'Đâu là bằng chứng trực tiếp nhất cho thấy đây là cảnh đám rước?',
+    options:[
+      'Các nhân vật hoàn toàn đứng tách biệt.',
+      'Nhân vật di chuyển thành đoàn và mang theo nhiều vật phẩm.',
+      'Tác phẩm chỉ sử dụng một màu sắc.',
+      'Tất cả nhân vật đều nhìn thẳng về người xem.'
+    ],correct:1,
+    hint:'Hãy theo dõi hướng chuyển động của các chú chuột và những thứ chúng đang cầm.',
+    explain:'Cách sắp xếp các nhân vật nối tiếp nhau cùng những vật phẩm được mang theo là bằng chứng nhìn thấy trực tiếp. Đây là một cách đọc hình ảnh dựa trên quan sát, không đòi hỏi nhớ tên tranh.' },
+  { artwork:'tigers',kind:'hotspot',prompt:'Hãy chạm vào con hổ tạo điểm nhấn thị giác ở trung tâm bố cục.',
+    hotspots:[{x:23,y:16,id:'upper',label:'Vị trí phía trên bên trái'},
+              {x:50,y:38,id:'center',label:'Vị trí trung tâm'},
+              {x:77,y:77,id:'lower',label:'Vị trí phía dưới bên phải'}],correct:'center',
+    hint:'Hãy nhìn quanh trục giữa của bức tranh, nơi các đường nét hướng mắt người xem đến.',
+    explain:'Con hổ ở giữa giữ vai trò tâm điểm thị giác trong cách sắp xếp năm con hổ. Ta có thể chỉ ra vị trí, kích thước và tương phản để giải thích nhận xét này.' }
+];
+
+const THEMES = [ 'Đời sống Việt Nam', 'Con người & Thiên nhiên', 'Niềm vui và Ước vọng' ];
+const REASONS = [
+  'Các tác phẩm cùng gợi nhắc đến những câu chuyện của đời sống.',
+  'Khi đặt cạnh nhau, màu sắc và bố cục tạo nên một cuộc đối thoại thú vị.',
+  'Ba tác phẩm mang đến những cảm xúc khác nhau về cùng một chủ đề.',
+  'Mình muốn tự viết một lời giới thiệu khác.'
+];
+
+/* ============================================================
+ * GAME ENGINE
+ * ============================================================ */
+const $ = selector => document.querySelector(selector);
+const getArt = id => ARTWORKS.find(item=>item.id===id);
+const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const percent = (points,max) => Math.round(points / max * 100);
+const formatScore = value => Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+const thumb = (art,cls='',lazy=true) => `<img class="${cls}" data-art-image="${art.id}" src="${art.image}" alt="${esc(art.title)}" loading="${lazy?'lazy':'eager'}">`;
+const state = {};
+let noticeTimer;
+let dragged = null;
+
+function reset(keepMode='demo') {
+  Object.assign(state,{
+    screen:'home',mode:keepMode, points:{observation:0,connection:0,interpretation:0,curator:0},
+    lookIndex:0,lookDone:{},lookHints:{},lookError:false,
+    connections:{},connectionHints:{},connectionSelected:null,connectionError:'',
+    decodeIndex:0,decodeDone:{},decodeHints:{},decodeError:false,
+    theme:THEMES[Math.floor(Math.random()*THEMES.length)],curatorSelected:null,
+    exhibition:[null,null,null], exhibitionTitle:'Đối thoại Sắc Việt',
+    reasonIndex:null,customReason:''
+  });
+  render();
+}
+function total() { return Object.values(state.points).reduce((a,b)=>a+b,0); }
+function stageProgress() { return ({home:0,look:24,connection:49,decode:73,curator:88,result:100})[state.screen]||0; }
+function updateHead() {
+  const n=stageProgress();
+  $('#progressFill').style.width=n+'%';
+  $('.progress-rail').setAttribute('aria-valuenow',n);
+  $('#scorePill').textContent=`${formatScore(total())} / 100`;
+}
+function render() {
+  const page=({home:renderHome,look:renderLook,connection:renderConnection,
+    decode:renderDecode,curator:renderCurator,result:renderResult})[state.screen];
+  $('#game').classList.remove('screen');
+  void $('#game').offsetWidth;
+  $('#game').classList.add('screen');
+  $('#game').innerHTML=page();
+  updateHead();
+  attachImageFallbacks($('#game'));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function switchScreen(name) {state.screen=name;render();}
+function notify(message) {
+  const el=$('#notice');el.textContent=message;el.classList.add('visible');
+  clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>el.classList.remove('visible'),2500);
+}
+function placeholder(art) {
+  const title=esc(art.title);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+    <rect width="640" height="480" fill="#e6d8bf"/><path d="M40 40H600V440H40Z" fill="none" stroke="#b83a32" stroke-width="3"/>
+    <circle cx="320" cy="170" r="70" fill="none" stroke="#31546D" stroke-width="5" opacity=".4"/>
+    <path d="M274 195q42-75 90 0" fill="none" stroke="#31546D" stroke-width="5" opacity=".4"/>
+    <text x="320" y="290" fill="#23211F" font-size="31" font-family="Georgia" text-anchor="middle">Ảnh chưa tải</text>
+    <text x="320" y="339" fill="#31546D" font-size="23" font-family="Arial" text-anchor="middle">${title}</text>
+    <text x="320" y="389" fill="#706B63" font-size="16" font-family="Arial" text-anchor="middle">Cần mạng hoặc thay ảnh bằng file local</text>
+    </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function attachImageFallbacks(root) {
+  root.querySelectorAll('img[data-art-image]').forEach(img=>{
+    const art=getArt(img.dataset.artImage);
+    img.addEventListener('error',function(){
+      if(img.dataset.fallbackDone)return;
+      img.dataset.fallbackDone='1';
+      const fallback=placeholder(art);
+      img.src=fallback;
+      root.querySelectorAll('[data-crop-art]').forEach(crop=>{
+        if(crop.dataset.cropArt===art.id)crop.style.backgroundImage='url(\"'+fallback+'\")';
+      });
+    });
+  });
+}
+function referenceButton() {
+  return state.mode==='demo'
+    ? '<button class="text-action" data-action="library" type="button">▦ Mở thư viện tranh (Demo Mode)</button>'
+    : '<span class="small-note">Museum Mode · Có thể quay lại quan sát tác phẩm trong bảo tàng.</span>';
+}
+function header(num,title,description) {
+  return `<div class="stage-header"><div class="stage-num">${num}</div><div><h2>${title}</h2><p>${description}</p></div></div>`;
+}
+function tipButton(disabled=false) {
+  return `<button class="text-action" type="button" data-action="hint" ${disabled?'disabled':''}>✦ Dùng gợi ý · câu này chỉ còn 50% điểm</button>`;
+}
+function stageActions(hint,button,label,disabled) {
+  return `<div class="actions">${hint||'<span></span>'}<button class="primary" data-action="${button}" type="button" ${disabled?'disabled':''}>${label} <span aria-hidden="true">→</span></button></div>`;
+}
+function renderHome() {
+  const mode=(id,title,description) => `<button type="button" class="mode-choice ${state.mode===id?'selected':''}" data-action="mode" data-mode="${id}" aria-pressed="${state.mode===id}"><strong>${title}</strong><small>${description}</small></button>`;
+  return `<section class="home-layout" aria-label="Mở đầu trò chơi">
+    <div class="home-copy">
+      <p class="overline">A Curator's Challenge · 01</p>
+      <h1 class="hero-title"><span>MẬT MÃ</span><span>SẮC VIỆT</span></h1>
+      <div class="red-stroke"></div><p class="subtitle">Your visit isn't over yet.</p>
+      <p class="lede">Một triển lãm số đang chờ được khôi phục. Hãy trở thành <strong>giám tuyển trẻ</strong>: nhìn kỹ, kết nối, giải mã và kể câu chuyện của chính bạn qua tranh dân gian Việt Nam.</p>
+      <p class="mode-label">Bạn đang ở bảo tàng?</p>
+      <div class="mode-row">${mode('museum','✓ Museum Mode','Chơi sau chuyến tham quan. Nhắc bạn nhìn lại hiện vật.')} ${mode('demo','▦ Demo Mode','Có thư viện tranh để kiểm thử tại lớp hoặc ở nhà.')}</div>
+      <button class="primary" data-action="start" type="button">BẮT ĐẦU KHÁM PHÁ <span aria-hidden="true">↗</span></button>
+      <p class="tiny-info">◷ 12–15 phút &nbsp; · &nbsp; ♧ 2–4 người / nhóm &nbsp; · &nbsp; Không cần tài khoản</p>
+    </div>
+    <div class="cover-display" aria-hidden="true"><div class="cover-circle"></div>
+      <div class="cover-photo">${thumb(getArt('mice'),'') }</div>
+      <div class="cover-photo">${thumb(getArt('tigers'),'') }</div>
+      <div class="cover-photo">${thumb(getArt('musicians'),'') }</div>
+      <div class="cover-caption">Look · Connect · Create</div>
+    </div>
+  </section>`;
+}
+function renderLook() {
+  const q=LOOK_QUESTIONS[state.lookIndex],art=getArt(q.artwork),solved=!!state.lookDone[state.lookIndex],hinted=!!state.lookHints[state.lookIndex];
+  const options=ARTWORKS.slice(0,4).map(item=>`<button class="answer-card ${solved&&item.id===art.id?'correct':''}" data-action="look-answer" data-art="${item.id}" type="button" ${solved?'disabled':''}>
+    ${thumb(item,'answer-thumb')}<strong>${esc(item.title)}</strong></button>`).join('');
+  const feedback= solved ? `<div class="feedback good"><span class="stamp">DISCOVERED</span> Chính xác! ${hinted?'(+10 điểm)':'(+20 điểm)'}</div>
+      <div class="reveal-box"><div class="reveal-image" style="--rx:${q.ringX}%;--ry:${q.ringY}%;--rw:${q.ringW}%;--rh:${q.ringH}%">${thumb(art,'',false)}<div class="reveal-ring"></div></div><p>${esc(q.reveal)}</p></div>`
+      : state.lookError?'<div class="feedback soft">Thử quan sát kỹ hơn nhé. Bạn không bị trừ điểm.</div>':'';
+  return `<section class="stage">
+    ${header('01','LOOK CLOSER','Bạn thực sự nhìn thấy bao nhiêu? Hãy ghép một chi tiết phóng to với tác phẩm gốc. Không cần nhớ tên tác giả.')}
+    <div class="stage-grid">
+      <div class="paper-card"><p class="card-kicker">Chi tiết ${state.lookIndex+1}/2 · Observation</p>
+        <h3 class="question">Chi tiết này thuộc tác phẩm nào?</h3>
+        <div class="crop-frame ${state.lookError?'uncertain':''}"><div class="crop-visual" data-crop-art="${art.id}" style="background-image:url(&quot;${art.image}&quot;);background-position:${q.focusX}% ${q.focusY}%;background-size:${q.scale}% auto;"></div><span class="crop-marker">ZOOM ×3</span></div>
+        <p class="small-note">${esc(q.detail)}. Hãy quan sát đường nét, màu sắc và nhân vật xung quanh.</p>
+        ${hinted&&!solved?`<div class="tip"><strong>Gợi ý:</strong> ${esc(q.hint)}</div>`:''}
+        ${feedback}
+      </div>
+      <div class="paper-card"><p class="card-kicker">Bốn tác phẩm · Chọn một</p><div class="answer-grid">${options}</div>
+      ${stageActions(solved?'':tipButton(hinted),'next-look',state.lookIndex===1?'Sang chặng 02':'Chi tiết tiếp theo',!solved)}
+      <div class="actions">${referenceButton()}</div></div>
+    </div></section>`;
+}
+function renderConnection() {
+  const remaining=ARTWORKS.slice(0,4).filter(art=>!state.connections[art.id]);
+  const tokens=remaining.map(art=>`<button class="art-token ${state.connectionSelected===art.id?'selected':''}" type="button" draggable="true" data-drag-art="${art.id}" data-action="connection-select" data-art="${art.id}" aria-pressed="${state.connectionSelected===art.id}">
+    ${thumb(art)}<strong>${esc(art.title)}</strong><small>Chạm để chọn · hoặc kéo</small></button>`).join('');
+  const zone=tradition=>{
+    const grouped=ARTWORKS.slice(0,4).filter(art=>state.connections[art.id]===tradition);
+    return `<div class="dropzone" role="button" tabindex="0" data-drop-bucket="${tradition}" data-action="connection-place" data-bucket="${tradition}" aria-label="Đặt tác phẩm đã chọn vào nhóm ${tradition}">
+      <h3>${tradition}</h3><p class="drop-hint">Thả tranh vào nhóm này · ${grouped.length}/2 tranh</p>
+      <div class="placed-items">${grouped.map(art=>`<div class="placed-item">${thumb(art)}<span>${esc(art.title)}</span></div>`).join('')}</div>
+    </div>`;
+  };
+  const complete=Object.keys(state.connections).length===4;
+  const selected=state.connectionSelected?getArt(state.connectionSelected):null;
+  return `<section class="stage">
+    ${header('02','FIND THE CONNECTION','Hai dòng tranh, bốn tác phẩm. Kéo mỗi tác phẩm vào nhóm phù hợp; trên điện thoại, chạm tranh trước rồi chạm tên nhóm.')}
+    <div class="paper-card">
+      <div class="actions" style="margin-top:0"><span class="badge">Đã kết nối ${Object.keys(state.connections).length} / 4</span><span class="demo-chip">THÔNG TIN PHÂN LOẠI CẦN ĐỐI CHIẾU NHÃN HIỆN VẬT</span></div>
+      <p class="card-kicker" style="margin-top:16px">Những mảnh ghép chưa được phân loại</p>
+      <div class="source-list">${tokens||'<p class="small-note">Tất cả tác phẩm đã được kết nối.</p>'}</div>
+      <div class="drop-areas">${zone('Đông Hồ')}${zone('Hàng Trống')}</div>
+      <p class="status-line">${state.connectionError?esc(state.connectionError):selected?'Đã chọn: '+esc(selected.title)+'. Hãy chạm một nhóm bên dưới.':'Chọn một tác phẩm để bắt đầu.'}</p>
+      ${selected&&state.connectionHints[selected.id]?`<div class="tip">Gợi ý cho “${esc(selected.title)}”: Hãy thử nhóm <strong>${esc(selected.tradition)}</strong>.</div>`:''}
+      ${complete?'<div class="feedback good"><span class="stamp">CONNECTED</span> Bạn đã khôi phục hai nhóm tranh. Bây giờ hãy đọc những chi tiết bên trong.</div>':''}
+      ${stageActions(selected&&!complete?tipButton(!!state.connectionHints[selected.id]):'<span class="small-note">Chọn một tranh để dùng gợi ý.</span>','next-connection','Sang chặng 03',!complete)}
+      ${referenceButton()}
+    </div></section>`;
+}
+function renderDecode() {
+  const q=DECODE_QUESTIONS[state.decodeIndex],art=getArt(q.artwork),solved=!!state.decodeDone[state.decodeIndex],hinted=!!state.decodeHints[state.decodeIndex];
+  let visual,answers='';
+  if(q.kind==='options') {
+    visual=`<div class="artwork-large">${thumb(art,'',false)}</div>`;
+    answers=`<div class="choice-list">${q.options.map((opt,i)=>`<button class="choice ${solved&&i===q.correct?'good':''}" data-action="decode-option" data-choice="${i}" type="button" ${solved?'disabled':''}>${String.fromCharCode(65+i)}. ${esc(opt)}</button>`).join('')}</div>`;
+  } else {
+    visual=`<div class="artwork-large tall"><div class="hotspot-figure">${thumb(art,'',false)}
+       ${q.hotspots.map((h,i)=>`<button class="hotspot ${solved&&h.id===q.correct?'is-solved':''}" style="--left:${h.x}%;--top:${h.y}%" type="button" data-action="decode-hotspot" data-choice="${h.id}" aria-label="${esc(h.label)}" ${solved?'disabled':''}>${i+1}</button>`).join('')}</div></div>`;
+    answers='<p class="small-note">Chạm một trong ba dấu tròn ngay trên tác phẩm. Đừng lo nếu chưa chọn đúng ngay.</p>';
+  }
+  const feedback=solved?`<div class="feedback good"><span class="stamp">DECODED</span> Bạn đã tìm thấy bằng chứng. ${hinted?'(+5 điểm)':'(+10 điểm)'}</div><div class="ink-note">${esc(q.explain)}</div>`
+    :state.decodeError?'<div class="feedback soft">Look a little closer. Hãy thử tìm bằng chứng khác ngay trong tác phẩm.</div>':'';
+  return `<section class="stage">
+    ${header('03','DECODE THE ARTWORK','Không chỉ nhận ra tranh, bạn sẽ giải thích nhận định của mình bằng những gì mắt có thể thấy.')}
+    <div class="stage-grid">
+      <div class="paper-card"><p class="card-kicker">Giải mã ${state.decodeIndex+1}/2 · Interpretation</p>
+        <h3 class="question">${esc(q.prompt)}</h3>${visual}
+        ${state.mode==='demo'?'<p class="small-note">Chế độ Demo: bạn có thể đối chiếu tranh ngay trên màn hình.</p>':'<p class="small-note">Nếu cần, hãy nhìn lại hiện vật trước khi đưa ra nhận định.</p>'}
+      </div>
+      <div class="paper-card"><p class="card-kicker">Bằng chứng thị giác</p>${answers}
+        ${hinted&&!solved?`<div class="tip"><strong>Gợi ý:</strong> ${esc(q.hint)}</div>`:''}${feedback}
+        ${stageActions(solved?'':tipButton(hinted),'next-decode',state.decodeIndex===1?'Trở thành giám tuyển':'Câu giải mã tiếp theo',!solved)}
+        ${referenceButton()}
+      </div>
+    </div></section>`;
+}
+function selectedCount() {return state.exhibition.filter(Boolean).length;}
+function currentReason() {return state.reasonIndex===3?state.customReason.trim():(state.reasonIndex===null?'':REASONS[state.reasonIndex]);}
+function canFinish() {return selectedCount()===3 && currentReason().length>=3 && state.exhibitionTitle.trim().length>0;}
+function renderCurator() {
+  const bank=ARTWORKS.filter(a=>!state.exhibition.includes(a.id));
+  const tokens=bank.map(art=>`<button class="art-token ${state.curatorSelected===art.id?'selected':''}" type="button" draggable="true" data-drag-art="${art.id}" data-action="curator-select" data-art="${art.id}" aria-pressed="${state.curatorSelected===art.id}">
+      ${thumb(art)}<strong>${esc(art.title)}</strong><small>${esc(art.tradition)}</small></button>`).join('');
+  const slots=state.exhibition.map((id,i)=>{
+    const art=id&&getArt(id);
+    return `<div class="gallery-slot ${art?'filled':''}" data-action="curator-place" data-slot="${i}" data-drop-slot="${i}" role="button" tabindex="0" aria-label="Vị trí tác phẩm ${i+1}${art?', '+art.title:''}" ${art?`draggable="true" data-drag-art="${art.id}"`:''}>
+       ${art?`${thumb(art)}<strong>${esc(art.title)}</strong><button type="button" class="remove-slot" data-action="curator-remove" data-slot="${i}" aria-label="Gỡ tác phẩm ${esc(art.title)}">×</button>`:
+       `<span class="slot-number">0${i+1}</span><span class="slot-hint">Thả tác phẩm vào đây</span>`}
+      </div>`;
+  }).join('');
+  return `<section class="stage">
+     ${header('04','BECOME THE CURATOR','Không có một cách chọn tranh duy nhất. Hãy tạo triển lãm riêng, rồi kể vì sao ba tác phẩm xứng đáng đứng cạnh nhau.')}
+     <div class="theme-ticket"><div><small>Chủ đề được chọn ngẫu nhiên</small><strong>${esc(state.theme)}</strong></div><span aria-hidden="true" style="font-size:2.2rem">✦</span></div>
+     <div class="stage-grid">
+       <div class="paper-card"><p class="card-kicker">Kho tranh · Chọn ba tác phẩm</p>
+         <div class="source-list" style="grid-template-columns:repeat(2,minmax(0,1fr))">${tokens||'<p class="small-note">Bạn đã chọn đủ ba tác phẩm.</p>'}</div>
+         <p class="small-note">Bạn có thể kéo tác phẩm hoặc chạm để chọn, sau đó chạm vào một khung trống bên cạnh.</p>
+       </div>
+       <div class="paper-card"><p class="card-kicker">Your mini exhibition · ${selectedCount()}/3</p>
+         <div class="gallery-slots">${slots}</div>
+         <div class="form-area">
+           <div><label class="field-label" for="exhibitionTitle">Đặt tên triển lãm</label>
+           <input class="text-field" id="exhibitionTitle" maxlength="70" value="${esc(state.exhibitionTitle)}" placeholder="Tên triển lãm của bạn"></div>
+           <div><p class="field-label">Vì sao bạn đặt ba tác phẩm này cùng nhau?</p>
+             <div class="reason-list">${REASONS.map((reason,i)=>`<label class="reason-option ${state.reasonIndex===i?'is-selected':''}"><input type="radio" name="curator-reason" value="${i}" ${state.reasonIndex===i?'checked':''}><span>${esc(reason)}</span></label>`).join('')}</div>
+           </div>
+           ${state.reasonIndex===3?`<div><label class="field-label" for="customReason">Lời giám tuyển của bạn</label><textarea id="customReason" class="text-field" rows="3" maxlength="500" placeholder="Mình đã chọn ba tác phẩm này vì...">${esc(state.customReason)}</textarea></div>`:''}
+         </div>
+         ${stageActions('<span class="small-note">Không có đáp án duy nhất · Hoàn thành: +10 điểm</span>','finish','Hoàn thành triển lãm',!canFinish())}
+       </div>
+     </div>
+   </section>`;
+}
+function bar(label,value,max,cls) {
+  const p=percent(value,max);
+  return `<div class="skill"><span class="skill-name">${label}</span><div class="meter ${cls}"><span style="width:${p}%"></span></div><strong>${p}%</strong></div>`;
+}
+function renderResult() {
+  const skills=[['THE OBSERVER','The Observer','Bạn nhận ra những chi tiết mà nhiều người có thể bỏ qua.',percent(state.points.observation,40)],
+    ['THE CONNECTOR','The Connector','Bạn thích tìm những mối dây kết nối giữa các tác phẩm.',percent(state.points.connection,30)],
+    ['THE STORYTELLER','The Storyteller','Bạn biết dùng bằng chứng thị giác để tạo nên cách đọc riêng.',percent(state.points.interpretation,20)]];
+  skills.sort((a,b)=>b[3]-a[3]);
+  const profile=skills[0];
+  const pieces=state.exhibition.map(id=>getArt(id));
+  return `<section class="stage">
+    <div class="result-intro"><p class="overline">Challenge completed · Your curator profile</p>
+      <h1>YOUR EXHIBITION</h1><span class="name">✧ ${profile[0]} ✧</span>
+      <p>${profile[2]} Và hơn cả điểm số, bạn đã tự tạo một câu chuyện mới từ những tác phẩm vừa nhìn thấy.</p></div>
+    <div class="result-columns">
+      <div class="paper-card"><p class="card-kicker">Curator profile</p><h2 style="font-size:1.65rem;margin-bottom:8px">${profile[1]}</h2>
+        ${bar('Observation',state.points.observation,40,'')}
+        ${bar('Connection',state.points.connection,30,'green')}
+        ${bar('Interpretation',state.points.interpretation,20,'gold')}
+        <p class="small-note">Các chỉ số dựa trên cơ chế bản demo, không phải thước đo năng lực nghệ thuật hay cảm thụ mỹ thuật.</p>
+      </div>
+      <div class="paper-card"><p class="card-kicker">Khôi phục thành công</p><div class="score-big">${formatScore(total())}<small> / 100</small></div>
+       <p class="small-note">Điểm quan sát (40) + kết nối (30) + suy luận (20) + hoàn thành triển lãm (10). Không trừ điểm vì chọn sai; gợi ý giảm một nửa điểm của lượt đó.</p>
+       <div class="feedback good">✦ Triển lãm đã được khôi phục. Phần lựa chọn và cảm nhận cá nhân không bị chấm đúng–sai.</div>
+      </div>
+    </div>
+    <div class="virtual-gallery" id="printableGallery">
+      <div class="gallery-sign"><small>Mật Mã Sắc Việt · Your mini exhibition</small>
+        <h2>${esc(state.exhibitionTitle)}</h2><span class="badge">${esc(state.theme)}</span>
+        <p>“${esc(currentReason())}”</p>
+      </div>
+      <div class="wall-artworks">${pieces.map(art=>`<div class="wall-piece"><div class="frame">${thumb(art,'',false)}</div><h3>${esc(art.title)}</h3><p>${esc(art.tradition)}</p></div>`).join('')}</div>
+      <div class="gallery-footer">Giám tuyển trẻ · Chúng ta không chỉ nhìn tranh — chúng ta tạo ra kết nối.</div>
+    </div>
+    <div class="actions"><button class="quiet" type="button" data-action="replay">↺ Chơi lại</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="quiet" data-action="copy" type="button">⎘ Sao chép tóm tắt</button><button class="secondary" data-action="print" type="button">▣ In / Lưu bản kết quả</button></div></div>
+    <p class="small-note">Bạn có thể chụp màn hình triển lãm hoặc dùng nút In / Lưu bản kết quả để in trang này. Chức năng chia sẻ hình ảnh tự động chưa được tích hợp trong bản demo.</p>
+   </section>`;
+}
+
+/* ============================================================
+ * ACTIONS / INPUT
+ * ============================================================ */
+function hint() {
+  if(state.screen==='look') {state.lookHints[state.lookIndex]=true;render();}
+  else if(state.screen==='decode') {state.decodeHints[state.decodeIndex]=true;render();}
+  else if(state.screen==='connection') {
+    if(!state.connectionSelected){notify('Chạm chọn một tác phẩm trước khi dùng gợi ý.');return;}
+    state.connectionHints[state.connectionSelected]=true;render();
+  }
+}
+function chooseLook(id) {
+  if(state.lookDone[state.lookIndex])return;
+  if(id===LOOK_QUESTIONS[state.lookIndex].artwork) {
+    state.lookDone[state.lookIndex]=true;
+    state.points.observation+=state.lookHints[state.lookIndex]?10:20;
+    state.lookError=false;
+  } else state.lookError=true;
+  render();
+}
+function chooseConnection(id) {
+  if(state.connections[id])return;
+  state.connectionSelected=(state.connectionSelected===id?null:id);
+  state.connectionError='';render();
+}
+function placeConnection(id,bucket) {
+  if(!id) {notify('Hãy chọn một tác phẩm trước.');return;}
+  if(state.connections[id])return;
+  const art=getArt(id);
+  if(art.tradition===bucket) {
+    state.connections[id]=bucket;
+    state.points.connection+=state.connectionHints[id]?3.75:7.5;
+    state.connectionSelected=null;
+    state.connectionError='';
+    notify('✦ Kết nối thành công!');
+  } else {
+    state.connectionError='Chưa khớp với nhóm này. Hãy quan sát và thử lại — không bị trừ điểm.';
+  }
+  render();
+}
+function answerDecode(choice) {
+  const q=DECODE_QUESTIONS[state.decodeIndex];
+  if(state.decodeDone[state.decodeIndex])return;
+  if(String(choice)===String(q.correct)) {
+    state.decodeDone[state.decodeIndex]=true;
+    state.points.interpretation+=state.decodeHints[state.decodeIndex]?5:10;
+    state.decodeError=false;
+  } else state.decodeError=true;
+  render();
+}
+function chooseCurator(id) {
+  state.curatorSelected=(state.curatorSelected===id?null:id);render();
+}
+function putCurator(id,index) {
+  if(!id) {notify('Chạm một tranh trong kho trước khi chọn khung.');return;}
+  if(!getArt(id))return;
+  const current=state.exhibition.indexOf(id);
+  if(current===index) {state.curatorSelected=null;render();return;}
+  if(state.exhibition[index] && current<0) {notify('Khung này đã có tranh. Hãy gỡ tranh trước khi thay.');return;}
+  if(state.exhibition[index] && current>=0) {
+    [state.exhibition[index],state.exhibition[current]]=[state.exhibition[current],state.exhibition[index]];
+  } else if(current>=0) {
+    state.exhibition[current]=null;state.exhibition[index]=id;
+  } else {
+    state.exhibition[index]=id;
+  }
+  state.curatorSelected=null;render();
+}
+function removeCurator(index) {
+  state.exhibition[index]=null;state.curatorSelected=null;render();
+}
+function nextLook() {
+  if(!state.lookDone[state.lookIndex])return;
+  if(state.lookIndex<LOOK_QUESTIONS.length-1){state.lookIndex++;state.lookError=false;render();}
+  else switchScreen('connection');
+}
+function nextDecode() {
+  if(!state.decodeDone[state.decodeIndex])return;
+  if(state.decodeIndex<DECODE_QUESTIONS.length-1){state.decodeIndex++;state.decodeError=false;render();}
+  else switchScreen('curator');
+}
+function openLibrary() {
+  const dialog=$('#libraryDialog');
+  $('#libraryGrid').innerHTML=ARTWORKS.map(art=>`<div class="library-item">${thumb(art)}<strong>${esc(art.title)}</strong>
+    <p>${esc(art.tradition)}</p><p>${esc(art.credit)}</p><a href="${art.source}" target="_blank" rel="noopener noreferrer">Xem nguồn ảnh ↗</a></div>`).join('');
+  attachImageFallbacks($('#libraryGrid'));
+  if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');
+}
+function copySummary() {
+  const names=state.exhibition.map((id,i)=>`${i+1}. ${getArt(id).title}`).join('\n');
+  const text=`MẬT MÃ SẮC VIỆT — MY MINI EXHIBITION\n${state.exhibitionTitle}\nChủ đề: ${state.theme}\n${names}\nLời giám tuyển: ${currentReason()}\nHồ sơ: ${formatScore(total())}/100 điểm`;
+  if(navigator.clipboard&&window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(()=>notify('Đã sao chép tóm tắt triển lãm.')).catch(()=>legacyCopy(text));
+  } else legacyCopy(text);
+}
+function legacyCopy(text) {
+  const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.append(t);t.select();
+  try {document.execCommand('copy');notify('Đã sao chép tóm tắt triển lãm.');}
+  catch(e) {notify('Không sao chép được trên trình duyệt này.');}
+  t.remove();
+}
+
+$('#game').addEventListener('click',event=>{
+  const target=event.target.closest('[data-action]');if(!target)return;
+  const action=target.dataset.action;
+  switch(action) {
+    case'mode':state.mode=target.dataset.mode;render();break;
+    case'start':switchScreen('look');break;
+    case'hint':hint();break;
+    case'look-answer':chooseLook(target.dataset.art);break;
+    case'next-look':nextLook();break;
+    case'connection-select':chooseConnection(target.dataset.art);break;
+    case'connection-place':placeConnection(state.connectionSelected,target.dataset.bucket);break;
+    case'next-connection':if(Object.keys(state.connections).length===4)switchScreen('decode');break;
+    case'decode-option':answerDecode(target.dataset.choice);break;
+    case'decode-hotspot':answerDecode(target.dataset.choice);break;
+    case'next-decode':nextDecode();break;
+    case'curator-select':chooseCurator(target.dataset.art);break;
+    case'curator-place':putCurator(state.curatorSelected,Number(target.dataset.slot));break;
+    case'curator-remove':removeCurator(Number(target.dataset.slot));event.stopPropagation();break;
+    case'finish':if(canFinish()){state.points.curator=10;switchScreen('result');}break;
+    case'library':openLibrary();break;
+    case'replay':reset(state.mode);break;
+    case'copy':copySummary();break;
+    case'print':window.print();break;
+  }
+});
+
+// Tương tác bàn phím với khu vực thả (Space/Enter).
+$('#game').addEventListener('keydown',event=>{
+  if((event.key==='Enter'||event.key===' ') && event.target.matches('.dropzone,.gallery-slot')) {
+    event.preventDefault();event.target.click();
+  }
+});
+$('#game').addEventListener('input',event=>{
+  if(event.target.id==='exhibitionTitle')state.exhibitionTitle=event.target.value;
+  if(event.target.id==='customReason')state.customReason=event.target.value;
+  const finish=$('[data-action="finish"]');if(finish)finish.disabled=!canFinish();
+});
+$('#game').addEventListener('change',event=>{
+  if(event.target.name==='curator-reason') {
+    state.reasonIndex=Number(event.target.value);render();
+  }
+});
+
+// HTML5 Drag & Drop trên desktop; trên điện thoại dùng chạm-chọn / chạm-đặt.
+$('#game').addEventListener('dragstart',event=>{
+  const item=event.target.closest('[data-drag-art]');
+  if(!item || !['connection','curator'].includes(state.screen))return;
+  dragged=item.dataset.dragArt;
+  if(event.dataTransfer){event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',dragged);}
+  item.classList.add('dragging');
+});
+$('#game').addEventListener('dragend',event=>{
+  event.target.closest('[data-drag-art]')?.classList.remove('dragging');
+  $('#game').querySelectorAll('.over').forEach(el=>el.classList.remove('over'));
+  dragged=null;
+});
+$('#game').addEventListener('dragover',event=>{
+  const target=event.target.closest('[data-drop-bucket],[data-drop-slot]');
+  if(!target)return;
+  event.preventDefault();event.dataTransfer.dropEffect='move';
+  $('#game').querySelectorAll('.over').forEach(el=>el.classList.remove('over'));
+  target.classList.add('over');
+});
+$('#game').addEventListener('drop',event=>{
+  const target=event.target.closest('[data-drop-bucket],[data-drop-slot]');if(!target)return;
+  event.preventDefault();
+  const id=event.dataTransfer?.getData('text/plain')||dragged;
+  if(state.screen==='connection')placeConnection(id,target.dataset.dropBucket);
+  if(state.screen==='curator')putCurator(id,Number(target.dataset.dropSlot));
+  dragged=null;
+});
+$('#closeLibrary').addEventListener('click',()=>$('#libraryDialog').close());
+$('#libraryDialog').addEventListener('click',event=>{
+  if(event.target===$('#libraryDialog'))$('#libraryDialog').close();
+});
+
+reset();
+</script>
+</body>
+</html>
